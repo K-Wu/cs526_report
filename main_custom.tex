@@ -41,6 +41,7 @@
 % taken from
 % http://identitystandards.illinois.edu/graphicstandardsmanual/generalguidelines/colors.html
 \definecolor{beamer@UIUCgray}{RGB}{195,196,197}
+%\definecolor{beamer@UIUCgray}{RGB}{195,196,197}
 \definecolor{beamer@UIUCgray1}{RGB}{166,168,171}
 \definecolor{beamer@UIUCgray2}{RGB}{232,233,234}
 
@@ -107,7 +108,7 @@ anchorcolor = beamer@UIUCorange}
     \let\insertsectionnumber\relax
     \let\sectionname\relax
     \begin{frame}
-      \frametitle{On the Agenda}
+      \frametitle{Content}
       \begin{multicols}{2}
       \tableofcontents[currentsection]
       \end{multicols}
@@ -255,7 +256,7 @@ Reproducing the SLP\footnote{SLP stand for Super-word Level Parallelism.} Vector
 \begin{itemize}
     \item Modern processors exploit parallelism of all kinds to address the power wall issue.
 
-    \item SIMD (Single Instruction, Multiple Data) operations leverages data parallelism to boost performance.
+    \item SIMD operation leverages data parallelism to boost performance.
     
     %\visible<2->{
       \item Vectorization replaces homogeneous scalar operations with a set of SIMD arithmetic instructions in CPU.%}
@@ -296,9 +297,8 @@ Reproducing the SLP\footnote{SLP stand for Super-word Level Parallelism.} Vector
 \end{frame}
 
 \begin{frame}{Vectorizers in LLVM}
-  \begin{block}{}
+  \begin{block}{LLVM vectorizers are IR passes.}
   \begin{itemize}
-    \item LLVM vectorizers are IR to IR passes.
     \item They are target-independent, as they are before lowering!
     \item They transform \texttt{scalar} registers and operations into \texttt{vector} ones.
   \end{itemize}
@@ -309,7 +309,7 @@ Reproducing the SLP\footnote{SLP stand for Super-word Level Parallelism.} Vector
       \item SLP algorithm was proposed in 2000\textsuperscript{[4]}.
       \item GCC adpoted the loop-aware variant of SLP vectorizer\textsuperscript{[6]}.
       \item Later LLVM implemented SLP to complement its Loop Vectorizer.
-      \item SLP Vectorizer immediately succeeds Loop Vectorizer in the optimization pipeline.
+      \item SLP immediately follows Loop Vectorizer in the optimization pipeline.
     \end{itemize}
   \end{block}
   %\pause
@@ -464,10 +464,10 @@ Reproducing the SLP\footnote{SLP stand for Super-word Level Parallelism.} Vector
 
 \begin{frame}{Nuances}
 \protect\hypertarget{nuances}{}
-\begin{block}{We implement the stem part of the algorithm}
+\begin{block}{We implement the stem part of the tree building and vectorization}
   \begin{itemize}
-  \item reduction is not supported.
-  \item loop-awareness is not supported.
+  \item Reduction and loop-awareness are not supported.
+  \item Uses many helpers from LLVM 3.5.0, e.g., block scheduling, tree cost calculation, consecutive access, etc.
   \end{itemize}
   
 \end{block}
@@ -528,7 +528,7 @@ store <16 x i32> %3, <16 x i32>* bitcast ([16 x i32]* @c32 to <16 x i32>*), alig
   \end{frame}
   
 \hypertarget{pruning}{%
-\section{Pruning the Tree for More Profit}\label{pruning}}
+\section{TSLP: Prune the Tree for More Profit}\label{pruning}}
 
 \begin{frame}{}
 \begin{block}{Ideas from TSLP\textsuperscript{[5]}}
@@ -640,7 +640,7 @@ multi\_block.ll, multi\_user.ll, phi.ll, phi3.ll}
 \end{block}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{}
 \begin{block}{Methodology}
 \begin{itemize}
 \item Our pass is compared with the original SLP vectorizer from 8.0.1.
@@ -657,6 +657,18 @@ multi\_block.ll, multi\_user.ll, phi.ll, phi3.ll}
 
 \end{frame}
 
+\hypertarget{summary}{%
+\section{Summary}\label{reference}}
+
+\begin{frame}{Summary}
+\begin{block}{}
+\begin{itemize}
+    \item Reproduced the stem of bottom-up SLP vectorizer, based on LLVM 3.5.0.
+    \item Implemented the TSLP tree pruning to find the most profitable cut.
+    \item Achieved up to 18.7\% speed up, and at least comparable performance, in several scientific workload, compared with LLVM 8.0.1 SLP implementation.
+\end{itemize}
+\end{block}
+\end{frame}
 
 \hypertarget{reference}{%
 \section{Reference}\label{reference}}
@@ -674,7 +686,7 @@ multi\_block.ll, multi\_user.ll, phi.ll, phi3.ll}
 
 {[}5{]} Vasileios Porpodas and Timothy M. Jones. Throttling Automatic Vectorization: When Less Is More. \url{llvm.org/devmtg/2015-10/slides/Porpodas-ThrottlingAutomaticVectorization.pdf}
 
-{[]}6{]} Ira Rosen et al. Loop-Aware SLP in GCC.
+{[}6{]} Ira Rosen et al. Loop-Aware SLP in GCC.
 
 \end{frame}
 
