@@ -478,7 +478,7 @@ Reproducing the SLP\footnote{SLP stand for Super-word Level Parallelism.} Vector
   \item \texttt{PHI}: Inserts vectorized value at teminators of each incoming basic blocks.
   \item \texttt{Call}: Exploits LLVM intrinsics.
   \item \texttt{ShuffleVector}: Exploits alternate op sequence, e.g. \texttt{add}-\texttt{sub}.
-  \item Commutative binary operators: Reordering possibly enables vectorization. 
+  \item Commutative binary operators: Reordering may enable vectorization. 
 \end{itemize}
 
 \end{block}
@@ -529,9 +529,16 @@ store <16 x i32> %3, <16 x i32>* bitcast ([16 x i32]* @c32 to <16 x i32>*), alig
 \section{Pruning the Tree for More Profit}\label{pruning}}
 
 \begin{frame}{}
-\begin{block}{Prune the Vectorization Tree for More Profit.}
+\begin{block}{Ideas from TSLP\textsuperscript{[5]}}
   \begin{itemize}
-    \item We adopt this idea from TSLP\textsuperscript{[5]}.
+      \item Prunes the unprofitable subregion and not to vectorize them.
+      \item Tries out many cuts, not all.
+      \item Looks for the best cut.
+  \end{itemize}
+\end{block}
+\begin{block}{What we did}
+  \begin{itemize}
+    \item We adopt these idea from TSLP\textsuperscript{[5]}.
     \item We search for the best cut of the tree-cluster and apply it before vectorization.
     \item We search for the best vectorization width.
     \item We copy from llvm-3.5.0 the handlers for unsupported instructions.
@@ -572,15 +579,22 @@ store <16 x i32> %3, <16 x i32>* bitcast ([16 x i32]* @c32 to <16 x i32>*), alig
   \end{frame}
 
   \begin{frame}{}
-    \begin{block}{Prune the Vectorization Tree for More Profit.}
-      \begin{itemize}
-        \item We adopt this idea from TSLP\textsuperscript{[5]}.
-        \item We search for the best cut of the tree-cluster and apply it before vectorization.
-        \item We search for the best vectorization width.
-        \item We copy from llvm-3.5.0 the handlers for unsupported instructions.
-      \end{itemize}
-    \end{block}
-    \end{frame}
+\begin{block}{Ideas from TSLP\textsuperscript{[5]}}
+  \begin{itemize}
+      \item Prunes the unprofitable subregion and not to vectorize them.
+      \item Tries out many cuts, not all.
+      \item Looks for the best cut.
+  \end{itemize}
+\end{block}
+\begin{block}{What we did}
+  \begin{itemize}
+    \item We adopt these idea from TSLP\textsuperscript{[5]}.
+    \item We search for the best cut of the tree-cluster and apply it before vectorization.
+    \item We search for the best vectorization width.
+    \item We copy from llvm-3.5.0 the handlers for unsupported instructions.
+  \end{itemize}
+\end{block}
+\end{frame}
 
 \hypertarget{Evaluation}{%
 \section{Evaluation}\label{evaluation}}
@@ -627,7 +641,7 @@ multi\_block.ll, multi\_user.ll, phi.ll, phi3.ll}
 \begin{frame}
 \begin{block}{Methodology}
 \begin{itemize}
-\item Our pass is compared with the original SLP vectorizer from in 8.0.1.
+\item Our pass is compared with the original SLP vectorizer from 8.0.1.
 \item Two passes are compared in the O3 pipeline.
 \item We dump and replicate the O3 optimization pipeline.
 \item We replace the original \texttt{-slp-vectorizer} with \texttt{-slpvect-kdw}, in the form of shared library, to run our pass.
