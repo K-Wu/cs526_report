@@ -1,0 +1,17 @@
+main_custom.pdf
+*.aux
+*.synctex.gz
+*.snm
+main.tex
+*.Rmd
+*.vrb
+.Rproj.user/
+*.Rproj
+*.fdb_latexmk
+*.nav
+*.toc
+*.out
+*.log
+*.fls
+.RData
+.Rhistory
